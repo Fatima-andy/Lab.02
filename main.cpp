@@ -1,161 +1,163 @@
 #include <iostream>
-#include <time.h>
-
 using namespace std;
 
 struct nodo {
-    int valor;
-    nodo* sig;
-    int dato;
+    int num;
+    nodo *izq;
+    nodo *der;
 };
-nodo *pInicio = NULL;
 
- ///Ejercicio 5
-/*void llenarLista(int);
-void mostrarLista(void);
-void Listinv(nodo*, nodo*);
+int sumI = 0, sumP = 0, cI = 0, cP = 0;
+int lvl = 0, numnod= 0, sumNod = 0;
 
-nodo * p = NULL;
+typedef struct nodo Nodo;
+typedef struct nodo *Arbol;
 
-int main(void) {
-    int n;
+Arbol makeTree(int num){
+    Arbol p = new Nodo;
+    p -> num = num;
+    p -> izq = NULL;
+    p -> der = NULL;
 
-    cout << "Ingresa la cantidad d numeros q usaras ";
-    cin >> n;
-    llenarLista(n);
-
-    cout << "Tu lista:" << endl;
-    mostrarLista();
-
-    cout << "Lista invertida: " << endl;
-    Listinv(pInicio, NULL);
-
-    mostrarLista();
-
-    return 0;
+    return p;
 }
 
-void llenarLista(int n) {
-    srand(time(NULL));
-    nodo* nuevo, * s;
-
-    if (pInicio == NULL) {
-        nuevo = new nodo;
-        pInicio = nuevo;
-        pInicio->valor = rand() % 100 + 1;
-        pInicio->sig = NULL;
-    }
-
-    s = pInicio;
-
-    for (int i = 0; i < n - 1; i++)
-    {
-        nuevo = new nodo;
-        s->sig = nuevo;
-        s = nuevo;
-        s->sig = NULL;
-        s->valor = rand() % 100 + 1;
-    }
-}
-
-void mostrarLista(void) {
-    nodo* s = pInicio;
-
-    while (s != NULL)
-    {
-        cout << s->valor << " ";
-        s = s->sig;
-    }
-    cout << endl;
-}
-
-void Listinv(nodo* s, nodo* p) {
-
-    if (s != NULL) {
-        inversionLista(s->sig, s);
-        s->sig = p;
-    }
-    else
-    {
-        pInicio = p;
-    }
-}
-*/
-
-///Ej 7
-
-void fillList(int cant) {
-    nodo* next, * s;
-    int data;
-
-    cout << "Ingresa tus datos:" << endl;
-    if (pInicio == NULL) {
-        next = new nodo;
-        pInicio = next;
-        cin >> data;
-        next->dato = data;
-        next->sig = NULL;
-    }
-    s = pInicio;
-
-    for (int i = 0; i < (cant - 1); i++) {
-        next = new nodo;
-        s->sig = next;
-        next->sig = NULL;
-        cout << "Ingresa un dato: ";
-        cin >> data;
-        next->dato = data;
-        s = next;
-    }
-}
-
-void mostrar() {
-    nodo* s = pInicio;
-    cout << "Mostrando lista:" << endl;
-    while (s != NULL)
-    {
-        cout << s->dato << " ";
-        s = s->sig;
-    }
-    cout << endl;
-}
-
-void buscar(int numero, nodo* s) {
-    nodo* q = NULL;
-
-    while (s != NULL) {
-        if (s->dato == numero && s == pInicio) {
-            pInicio = s->sig;
-            delete s;
-            s = pInicio;
-            continue;
-        }
-        q = s;
-        s = s->sig;
-
-        if (s != NULL && s->dato == numero) {
-            q->sig = s->sig;
-            delete s;
-            s = q->sig;
-        }
-    }
-}
+void asI (Arbol, int);
+void asD (Arbol, int);
+void AddNod(Arbol);
+void inNiveles(Arbol);
+void numNod(Arbol);
+void SumNod(Arbol);
+void Print(Arbol);
+void SumPI(Arbol);
 
 int main() {
 
-    int cant, bus;
+    int vari=0;
+    cout<<"Inicializando arbol.. \nValor de la raiz:"<<endl;
+    cin>> vari;
 
-    cout << "Cuantos numeros quieres ingresar? ";
-    cin >> cant;
+    Arbol arbol = makeTree(vari);
+    Arbol a;
 
-    fillList(cant);
-    mostrar();
+    bool continuar = true;
+    do{
+        int op = 0;
+        cout << "Menu: \n1) Agregar \n2) Imprimir todas las operaciones \n3) Salir"<<endl;
+        cout<<"Opcion elegida: ";
+        cin>> op;
+        switch (op){
+            case 1:  AddNod(arbol);
+                break;
+            case 2:
+                Print(arbol);
+                break;
+            case 3:   continuar = false;
+                break;
+            default : cout << "Opcion erronea!"<<endl;
+                break;
+        }
+    }while(continuar);
 
-    cout << "Cual numero quieres eliminar? ";
-    cin >> bus;
-
-    buscar(bus, pInicio);
-    mostrar();
-
+    SumPI(arbol);
     return 0;
+}
+
+void SumPI(Arbol a){
+    if ( a != NULL){
+        inNiveles(a -> izq);
+        if ( a -> num % 2 == 0){
+            sumP = sumP + a -> num;
+            cP++;
+        }else
+            sumI = sumI + a -> num;
+            cI--;
+        inNiveles(a -> der);
+        if ( a -> num % 2 == 0){
+            sumP = sumP + a -> num;
+            cP++;
+        }else
+            sumI = sumI + a -> num;
+            cI--;
+    }
+
+    cout<< "cantidad de pares: "<<cP<<" cantidad de impares: "<<cI<<endl;
+    cout<<"Suma de pares: "<<sumP<<" suma de impares: "<<sumI;
+}
+void asI ( Arbol a, int num){
+    if ( a == NULL){
+        cout<<"Error, el sub arbol Izq no existe"<<endl;
+    }else if( a -> izq != NULL){
+        cout <<"Error, el subarbol Izq ya existe"<<endl;
+    }
+    else
+        a -> izq = makeTree(num);
+}
+void asD ( Arbol a, int num){
+    if ( a == NULL){
+        cout<<"Error, el sub arbol Izq no existe"<<endl;
+    }else if( a -> der != NULL){
+        cout <<"Error, el subarbol Izq ya existe"<<endl;
+    }
+    else
+        a -> der = makeTree(num);
+}
+void AddNod( Arbol a){
+    int num = 0;
+    cout<< "Num a agregar:"<<endl;
+    cin>> num;
+
+    Arbol p = a;
+
+    while (true){
+        if ( num == p -> num){
+            cout<<"Error "<<num<<" ya existe" <<endl;
+            return;
+        }else if ( num < p -> num){
+            if( p -> izq == NULL)
+                break;
+            else
+                p = p -> izq;
+        }
+        else{
+            if(p -> der == NULL)
+                break;
+            else
+                p = p -> der;
+        }
+    }
+
+    if (num < p -> num)
+        asI( p, num);
+    else
+        asD(p, num);
+}
+void inNiveles(Arbol a){
+    if (a != NULL)
+        lvl ++;
+    inNiveles(a -> izq);
+    cout <<lvl;
+}
+void numNod(Arbol a){
+    if ( a != NULL){
+        inNiveles(a -> izq);
+        numnod++;
+        inNiveles(a -> der);
+        numnod++;
+    }
+    cout<< numnod;
+}
+void SumNod(Arbol a){
+    if ( a != NULL){
+        inNiveles(a -> izq);
+        sumNod = sumNod + a -> num;
+        inNiveles(a -> der);
+        sumNod = sumNod + a -> num;
+    }
+    cout << sumNod;
+}
+void Print(Arbol a){
+    cout<<"Num de niveles del arbol: "; inNiveles(a); cout<<endl;
+    cout<<"Num de nodos: "; numNod(a); cout<<endl;
+    cout<<"Suma de los nodos: "; SumNod(a); cout<<endl;
 }
