@@ -51,7 +51,7 @@ int main() {
         case 2:
             cout << "Num de niveles del arbol: "; inNiveles(a); cout << lvl << endl;
             cout << "Num de nodos: "; numNod(a); cout << numnod << endl;
-            //cout << "Suma de los nodos: "; SumNod(a); cout << sumNod << endl;
+            cout << "Suma de los nodos: "; SumNod(a); cout << sumNod << endl;
             break;
         case 3:   continuar = false;
             break;
@@ -132,9 +132,9 @@ void numNod(Arbol a) {
 }
 void SumNod(Arbol a) {
     if (a != NULL) {
-        inNiveles(a->izq);
+        SumNod(a->izq);
         sumNod = sumNod + a->num;
-        inNiveles(a->der);
+        SumNod(a->der);
         //sumNod = sumNod + a->num;
     }
     //cout << sumNod;
