@@ -1,146 +1,216 @@
 #include <iostream>
+
 using namespace std;
 
-struct nodo {
-    int num;
-    nodo* izq;
-    nodo* der;
+struct Nodo{
+    int dato;
+    Nodo *hI;
+    Nodo *hD;
+};
+struct nodoL{
+    int dato;
+    nodoL *sig;
 };
 
-int sumI = 0, sumD = 0;
-int lvl = 0, numnod = 0, sumNod = 0;
+typedef struct Nodo nodo;
+typedef struct Nodo *arbol;
+nodo *pArbol = NULL;
+nodoL *pInicio = NULL;
 
-typedef struct nodo Nodo;
-typedef struct nodo* Arbol;
-
-Arbol makeTree(int num) {
-    Arbol p = new Nodo;
-    p->num = num;
-    p->izq = NULL;
-    p->der = NULL;
+arbol maketree(int x){
+    arbol p = new nodo;
+    p -> dato = x;
+    p -> hI = NULL;
+    p -> hD = NULL;
 
     return p;
 }
 
-void asI(Arbol, int);
-void asD(Arbol, int);
-void AddNod(Arbol);
-void inNiveles(Arbol);
-void numNod(Arbol);
-void SumNod(Arbol);
-void Print(Arbol);
+void insIz(arbol,int);
+void insDer(arbol, int);
+void addNodo(arbol);
+void buscar(int,arbol);
+void inor(nodo *a){
+  if( a != NULL){
+      inor(a -> hI);
+      cout<<" "<<a -> dato;
+      inor( a -> hD);
+  }
+}
+void inFin(int);
+void MLista(void);
+void ej1(void);
+void ej5(void);
+void RecLista(void);
+void arb5(nodo**,int);
 
-int main() {
-
-    int vari = 0;
-    cout << "Inicializando arbol.. \nValor de la raiz:" << endl;
-    cin >> vari;
-
-    Arbol arbol = makeTree(vari);
-    Arbol a = arbol;
-
-    bool continuar = true;
-    do {
-        int op = 0;
-        cout << "Menu: \n1) Agregar \n2) Imprimir todas las operaciones \n3) Salir" << endl;
-        cout << "Opcion elegida: ";
-        cin >> op;
-        switch (op) {
-        case 1:  AddNod(arbol);
+int main(){
+    int chose;
+    cout<<"Escoja el ejercicio: "<<endl<<"1) Ej 1 \n2)Ej 5"<<endl;
+    cin>> chose;
+    switch(chose){
+        case 1:
+            ej1();
             break;
         case 2:
-            cout << "Num de niveles del arbol: "; inNiveles(a); cout << lvl << endl;
-            cout << "Num de nodos: "; numNod(a); cout << numnod << endl;
-            cout << "Suma de los nodos: "; SumNod(a); cout << sumNod << endl;
+            ej5();
             break;
-        case 3:   continuar = false;
+        default:  cout<<"No vale la opcion"<<endl;
             break;
-        default: cout << "Opcion erronea!" << endl;
-            break;
-        }
-    } while (continuar);
-
-
+    }
     return 0;
 }
 
-void asI(Arbol a, int num) {
-    if (a == NULL) {
-        cout << "Error, el sub arbol Izq no existe" << endl;
-    }
-    else if (a->izq != NULL) {
-        cout << "Error, el subarbol Izq ya existe" << endl;
-    }
+void insIz(arbol a, int dato){
+    if ( a == NULL)
+        cout<<"Arbol esta vacio"<<endl;
+    else if( a -> hI != NULL)
+        cout<<"El subarbol ya existe"<<endl;
     else
-        a->izq = makeTree(num);
+        a -> hI = maketree(dato);
 }
-void asD(Arbol a, int num) {
-    if (a == NULL) {
-        cout << "Error, el sub arbol Izq no existe" << endl;
-    }
-    else if (a->der != NULL) {
-        cout << "Error, el subarbol Izq ya existe" << endl;
-    }
+void insDer(arbol a, int dato){if ( a == NULL)
+        cout<<"Arbol esta vacio"<<endl;
+    else if( a -> hD != NULL)
+        cout<<"El subarbol ya existe"<<endl;
     else
-        a->der = makeTree(num);
+        a -> hD = maketree(dato);
 }
-void AddNod(Arbol a) {
+void addNodo(arbol a){
     int num = 0;
-    cout << "Num a agregar:" << endl;
+    cout<< "Agregar numero"<<endl;
     cin >> num;
 
-    Arbol p = a;
+    arbol p = a;
 
-    while (true) {
-        if (num == p->num) {
-            cout << "Error " << num << " ya existe" << endl;
+    while(true){
+        if( num == p -> dato){
+            cout << "Error: "<< num << "Ya existe"<<endl;
             return;
-        }
-        else if (num < p->num) {
-            if (p->izq == NULL)
+        }else if( num < p-> dato){
+            if( p -> hI == NULL){
+                break;
+            }else{
+                p = p -> hI;
+            }
+        }else{
+            if (p -> hD == NULL)
                 break;
             else
-                p = p->izq;
-        }
-        else {
-            if (p->der == NULL)
-                break;
-            else
-                p = p->der;
+                p = p -> hD;
         }
     }
-
-    if (num < p->num)
-        asI(p, num);
+    if(num < p -> dato)
+        insIz(p, num);
     else
-        asD(p, num);
+        insDer(p, num);
 }
-void inNiveles(Arbol a) {
-    if (a != NULL) {
-        lvl++;
-        inNiveles(a->izq);
-        //cout << lvl;
+void buscar(int datoA,arbol a){
+    if(!a)
+        cout<<"No existe"<<endl;
+    else {
+        inFin(a -> dato);
+        if (a->dato == datoA)
+            cout << "Si esta" << endl;
+        else if (datoA < a->dato)
+            buscar(datoA, a->hI);
+        else
+            buscar(datoA, a->hD);
     }
 }
-void numNod(Arbol a) {
-    if (a != NULL) {
-        numNod(a->izq);
-        numnod++;
-        numNod(a->der);
+void inFin(int dato){
+    nodoL *p, *q;
+    nodoL *nuevo = new nodoL;
+    nuevo -> dato = dato;
+    nuevo -> sig = NULL;
+    if(pInicio == NULL){
+        pInicio = nuevo;
     }
-    //cout << numnod;
-}
-void SumNod(Arbol a) {
-    if (a != NULL) {
-        SumNod(a->izq);
-        sumNod = sumNod + a->num;
-        SumNod(a->der);
-        //sumNod = sumNod + a->num;
+    else {
+        p = pInicio;
+        q = NULL;
+        while (p != NULL) {
+            q = p;
+            p = p->sig;
+        }
+        q->sig = nuevo;
     }
-    //cout << sumNod;
 }
-void Print(Arbol a) {
-    cout << "Num de niveles del arbol: "; inNiveles(a); cout << endl;
-    cout << "Num de nodos: "; numNod(a); cout << endl;
-    cout << "Suma de los nodos: "; SumNod(a); cout << endl;
+void MLista(void){
+    nodoL *s = pInicio;
+    while( s != NULL){
+        cout << s -> dato <<" ";
+        s = s -> sig;
+    }
+}
+void ej1(void){
+    int var = 0;
+    cout<<"Valor de la raiz: "<<endl;
+    cin>> var;
+    int datoB;
+
+    arbol Arbol = maketree(var);
+    bool cont = true;
+    do{
+        int op = 0;
+        cout << "Menu: \n1) Agregar \n2)Buscar nodo\n3) Salir"<<endl;
+        cout<<"Opcion elegida: ";
+        cin>> op;
+        switch(op){
+            case 1:  addNodo(Arbol);
+                break;
+            case 2: cout<<"Num q quieres encontrar: "<<endl;
+                cin>> datoB;
+                buscar(datoB, Arbol);
+                MLista();
+                cout<<endl;
+                break;
+            case 3:  cont = false;
+                break;
+            default:   cout<<"Opcion erronea"<<endl;
+                break;
+        }
+    }while(cont);
+}
+void ej5(void){
+   char ans;
+   int dato;
+   cout<<"Quireses ingresar un dato s/n?";
+   cin>>ans;
+   while(ans == 's'){
+       cout<<"Digita el dato";
+       cin >> dato;
+       inFin(dato);
+       cout<<"Desea meter otro dato?";
+       cin>>ans;
+   }
+   RecLista();
+   MLista();
+   cout<<endl;
+   inor(pArbol);
+
+}
+void RecLista(void){
+    nodoL *s = pInicio;
+    while( s != NULL){
+        arb5(&pArbol,s -> dato);
+        s = s -> sig;
+    }
+}
+void arb5(nodo**p, int dato){
+    if(!(*p)){
+        *p = new nodo;
+        (*p)->dato = dato;
+        (*p)->hI = (*p)->hD = NULL;
+    }
+    else
+    if(dato < (*p)->dato){
+        arb5(&((*p)->hI), dato);
+    }
+    else
+    if(dato > (*p)->dato){
+        arb5(&((*p)->hD), dato);
+    }
+    else
+        cout << "El nodo ya existe\n";
 }
